@@ -172,4 +172,111 @@ loop:
 inc:
   DATA 1`;
 
+const EXAMPLES = {
+    counter: `// Looping Counter (0-15)
+init:
+  LDI 0      // Start at 0
+loop:
+  OUT        // Display
+  ADD inc    // Add 1
+  JMP loop   // Repeat
+
+inc:
+  DATA 1`,
+
+    fib: `// Fibonacci (Compact)
+// 1, 1, 2, 3, 5, 8, 13...
+loop:
+  LDA curr   // Load curr
+  OUT        // Display
+  ADD prev   // A = curr + prev
+  STA curr   // curr = new sum
+  SUB prev   // A = new sum - prev (old curr)
+  STA prev   // prev = old curr
+  JMP loop   // Repeat
+
+prev: DATA 0
+curr: DATA 1`,
+
+    swap: `// Swap Two Values
+start:
+  LDA varA   // Load Value A
+  STA temp   // Store in Temp
+  LDA varB   // Load Value B
+  STA varA   // Store in A
+  LDA temp   // Load Temp (Original A)
+  STA varB   // Store in B
+  HLT        // Stop
+
+varA: DATA 5
+varB: DATA 9
+temp: DATA 0`,
+
+    double: `// Double Value (Left Shift)
+start:
+  LDA val    // Load value
+  ADD val    // Add to itself (x + x = 2x)
+  STA val    // Store result
+  OUT        // Display
+  HLT
+
+val: DATA 3  // Input (3 -> 6)`,
+
+    max: `// Max of Two Numbers
+start:
+  LDA A      // Load A
+  SUB B      // A - B
+  JC is_b    // If Carry (Borrow), A < B
+  LDA A      // Else A >= B, Load A
+  JMP out    // Go to output
+is_b:
+  LDA B      // Load B
+out:
+  OUT        // Display Max
+  HLT
+
+A: DATA 5
+B: DATA 9`,
+
+    rotate: `// Rotate Left (Pattern)
+// 1, 2, 4, 8, 1, 2...
+start:
+  LDA val    // Load Value
+  ADD val    // Shift Left (x2)
+  JC wrap    // If Carry (16), wrap to 1
+  JMP save   // Else save
+wrap:
+  ADD 0      // Add [0] (Opcode 1 = 1)
+save:
+  STA val    // Store
+  OUT        // Display
+  JMP start  // Repeat
+
+val: DATA 1`,
+
+    sum: `// Sum Array
+// Sums 3, 4, 5 -> 12
+start:
+  LDA n1     // Load 1st
+  ADD n2     // Add 2nd
+  ADD n3     // Add 3rd
+  OUT        // Display Sum
+  HLT
+
+n1: DATA 3
+n2: DATA 4
+n3: DATA 5`
+};
+
+$('example-selector').onchange = (e) => {
+    const key = e.target.value;
+    if (EXAMPLES[key]) {
+        $('assembly-editor').value = EXAMPLES[key];
+        // Optional: Auto-assemble
+        $('btn-assemble').click();
+    }
+    // Reset selector so you can select the same one again if needed
+    e.target.value = "";
+};
+
 $('btn-assemble').click();
